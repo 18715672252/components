@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日历组件</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        .week,.mouth {
+            width: 400px;
+        }
+        .week {
+           overflow: hidden;
+        }
+        .mouth {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .mouth>div {
+            width: calc(14.2% - 2px);
+            padding-top: calc(14.2% - 8px); 
+            background-color: white;
+            box-sizing: border-box;
+            text-align: center;
+            color: black;
+            border: 3px solid transparent;
+            cursor: pointer;
+            position: relative;
+            margin: 1px;
+        }
+        .mouth>div>div {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+        }
+        .mouth>div:hover {
+            border-color:  #fb0 !important;
+        }
+        .lastMouth,.nextMouth {
+            color: #999 !important;
+        }
+        .currentDay {
+            background-color: #fb0 !important;
+            color: white !important;
+        }
+        .isWeekend {
+            color: red !important;
+        }
+        .week > div {
+            width: 14.2%;
+            background-color: white;
+            text-align: center;
+            float: left;
+        }
+        .week > div:nth-child(n+6) {
+            color: red !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+    <div class="week">
+        <div>一</div>
+        <div>二</div>
+        <div>三</div>
+        <div>四</div>
+        <div>五</div>
+        <div>六</div>
+        <div>日</div>
+    </div>
+    <div class="mouth">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+</body>
+<script>
+    /*
+        new Date("11/14/2020").getDay(); 获取某个月几号是周几,周日是0
+        new Date().getDate() 获取当天使几号
+        new Date(2018,10,0).toLocaleDateString() 获取某个月有多少天
+    
+    
+    */
+    renderDate()
+    function renderDate(today=new Date().getDate(),mouth = new Date().getMonth() + 1,toyear=new Date().getUTCFullYear()) {
+        let toDay = +today // 获取今天是几号
+        let toMouth = +mouth  // 获取今天几月
+        let toYear = +toyear // 获取今天是哪年
+        let date = `${toMouth}/${toDay}/${toYear}`
+        let dayWeek = getDayWeek(date) // 获取今年今月的一号是周几
+        let day = new Date(toYear, toMouth, 0).toLocaleDateString().split('/')[2] // 获取今月有多少天
+        let lastDay = new Date(toYear, toMouth - 1, 0).toLocaleDateString().split('/')[2] - 0 // 获取上个月有多少天
+        let dateArr = document.querySelectorAll('.mouth>div')
+        let j = 1
+        let z = lastDay - dayWeek + 2
+        let x = 1
+        let renderDom = day - 2 + dayWeek
+        for (let i = 0; i < dateArr.length; i++) {
+            if (i >= dayWeek - 1 && i <= renderDom) {
+                dateArr[i].className = 'currentMouth'
+                let weekDay = getDayWeek(`${toMouth}/${j}/${toYear}`)
+                dateArr[i].setAttribute('date', `${toMouth}/${toYear}`)
+                dateArr[i].innerHTML = `<div date=${toMouth}/${toYear}>${j}</div>`
+                if (weekDay === 7 || weekDay === 6) {
+                    dateArr[i].className = 'currentMouth isWeekend'
+                }
+                j++
+                
+            }
+            if (i === toDay + dayWeek - 2) {
+                let newDate = new Date()
+                if (newDate.getUTCFullYear() === toYear && newDate.getMonth() + 1 === toMouth) {
+                    dateArr[i].className = 'currentMouth currentDay'
+                } else {
+                    dateArr[i].className = 'currentMouth'
+                }
+                
+            }
+            if (i < dayWeek - 1) {
+                dateArr[i].className = 'lastMouth'
+                if (toMouth-1 <= 1) {
+                    dateArr[i].setAttribute('date', `${12}/${toYear-1}`)
+                    dateArr[i].innerHTML = `<div date=${12}/${toYear-1}>${z}</div>`
+                } else {
+                    dateArr[i].setAttribute('date', `${toMouth-1}/${toYear}`)
+                    dateArr[i].innerHTML = `<div date=${toMouth-1}/${toYear}>${z}</div>`
+                }
+                z++
+            }
+            if (i > renderDom) {
+                dateArr[i].className = 'nextMouth'
+                if (toMouth+1 <= 12) {
+                    dateArr[i].setAttribute('date', `${toMouth+1}/${toYear}`)
+                    dateArr[i].innerHTML = `<div date=${toMouth+1}/${toYear}>${x}</div>`
+                } else {
+                    dateArr[i].setAttribute('date', `${1}/${toYear+1}`)
+                    dateArr[i].innerHTML = `<div date=${1}/${toYear+1}>${x}</div>`
+                }
+                x++
+            }
+        }
+        dateArr[0].parentNode.onclick = function (e) {
+            e = e || window.event
+            console.log(e.target);
+            console.log(e.target.getAttribute('date'));
+            let clickYear = e.target.getAttribute('date').split('/')[1]
+            let clickMouth = e.target.getAttribute('date').split('/')[0]
+            renderDate(new Date().getDate(),clickMouth,clickYear)
+            if(e.preventDefault){ // 阻止事件冒泡
+                e.preventDefault();
+            }else{
+                window.event.returnValue == false;
+            }
+        }
+    }
+
+    function getDayWeek(date) { // 获取某个月一号是周几，传参方试"月/日/年"
+        let dayWeek = new Date(date).getDay()
+        if (dayWeek) {
+            return dayWeek
+        } else {
+            return 7
+        }
+    }
+
+
+</script>
+
+</html>
